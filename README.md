@@ -40,7 +40,8 @@ A Java Spring Boot microservice that accepts an IP address and returns its geolo
   }`
 - error response
   `400 Bad Request — Invalid IP format `
-  `504 Gateway Timeout — External API timed out or failed`
+  `404 Not found — if Ips not found in provider DB`
+  `502 Gateway Timeout — External API timed out or failed`
 
 ## Running the Application
 - ./gradlew bootRun
