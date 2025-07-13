@@ -1,4 +1,4 @@
-package com.ip.geo.client;
+package com.ip.geo.provider;
 
 import com.ip.geo.model.IpLocationResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Slf4j
 @Component
-public class FreeIpApiClient {
+public class FreeIpApiClient implements GeoIpProvider{
 
     private final WebClient webClient;
 
@@ -19,6 +19,7 @@ public class FreeIpApiClient {
                 .build();
     }
 
+    @Override
     public IpLocationResponse fetch(String ip) {
         try {
             return webClient.get()

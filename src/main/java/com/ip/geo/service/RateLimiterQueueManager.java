@@ -1,8 +1,9 @@
 package com.ip.geo.service;
 
 import com.ip.geo.cache.IpLocationCache;
-import com.ip.geo.client.FreeIpApiClient;
+import com.ip.geo.provider.FreeIpApiClient;
 import com.ip.geo.model.IpLocationResponse;
+import com.ip.geo.provider.GeoIpProvider;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -17,11 +18,11 @@ public class RateLimiterQueueManager {
     private final BlockingQueue<String> requestQueue = new LinkedBlockingQueue<>();
     private final Map<String, CompletableFuture<IpLocationResponse>> pendingRequests = new ConcurrentHashMap<>();
 
-    private final FreeIpApiClient apiClient;
+    private final GeoIpProvider provider;
     private final IpLocationCache cache;
 
-    public RateLimiterQueueManager(FreeIpApiClient apiClient, IpLocationCache cache) {
-        this.apiClient = apiClient;
+    public RateLimiterQueueManager(GeoIpProvider provider, IpLocationCache cache) {
+        this.provider = provider;
         this.cache = cache;
     }
 
@@ -48,7 +49,7 @@ public class RateLimiterQueueManager {
                 String ip = requestQueue.poll();
                 if (ip != null) {
                     log.info("Processing queued IP request: {}", ip);
-                    IpLocationResponse response = apiClient.fetch(ip);
+                    IpLocationResponse response = provider.fetch(ip);
                     if (response != null) {
                         cache.put(ip, response);
                         pendingRequests.remove(ip).complete(response);

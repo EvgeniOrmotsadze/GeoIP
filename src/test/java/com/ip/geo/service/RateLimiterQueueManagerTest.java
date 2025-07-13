@@ -1,7 +1,7 @@
 package com.ip.geo.service;
 
 import com.ip.geo.cache.IpLocationCache;
-import com.ip.geo.client.FreeIpApiClient;
+import com.ip.geo.provider.FreeIpApiClient;
 import com.ip.geo.model.IpLocationResponse;
 import org.junit.jupiter.api.Test;
 

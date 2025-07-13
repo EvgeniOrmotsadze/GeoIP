@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 
-@Getter
+
 @Data
 public class IpLocationResponse {
 
@@ -28,5 +28,12 @@ public class IpLocationResponse {
 
     @JsonProperty("longitude")
     private double longitude;
+
+    public boolean isValid() {
+        return ipAddress != null
+                && country != null && !country.isBlank()
+                && continent != null && !continent.isBlank()
+                && !(latitude == 0.0 && longitude == 0.0);
+    }
 
 }

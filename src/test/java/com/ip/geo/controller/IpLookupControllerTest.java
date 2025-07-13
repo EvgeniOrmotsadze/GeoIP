@@ -19,7 +19,16 @@ class IpLookupControllerTest {
     @Test
     void validIpReturns200() {
         String ip = "136.159.0.0";
+
         IpLocationResponse expected = new IpLocationResponse();
+        expected.setIpAddress(ip);
+        expected.setContinent("Americas");
+        expected.setCountry("Canada");
+        expected.setRegion("Alberta");
+        expected.setCity("Calgary");
+        expected.setLatitude(51.075153);
+        expected.setLongitude(-114.12841);
+
         when(service.getIpLocation(ip)).thenReturn(Optional.of(expected));
 
         ResponseEntity<?> response = controller.lookup(ip);
@@ -39,7 +48,7 @@ class IpLookupControllerTest {
     }
 
     @Test
-    void ipServiceFailureReturns504() {
+    void ipServiceFailureReturns404() {
         String ip = "136.159.0.0";
 
         // Mock service to return empty (Optional.empty())
@@ -49,7 +58,7 @@ class IpLookupControllerTest {
         ResponseEntity<?> response = controller.lookup(ip);
 
         // Validate response
-        assertEquals(HttpStatus.GATEWAY_TIMEOUT, response.getStatusCode());
-        assertEquals("Failed to retrieve IP data", response.getBody());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -28,18 +29,16 @@ public class IpLookupController {
     @GetMapping
     public ResponseEntity<?> lookup(@RequestParam String ip) {
         if (!isValidIp(ip)) {
-            log.error("Invalid IP address provided: {}", ip);
             return ResponseEntity.badRequest().body("Invalid IP address format");
         }
 
-        Optional<IpLocationResponse> ipLocationOpt = ipLookupService.getIpLocation(ip);
-
-        if (ipLocationOpt.isPresent()) {
-            return ResponseEntity.ok(ipLocationOpt.get());
-        } else {
-            log.warn("Failed to retrieve IP data for: {}", ip);
-            return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("Failed to retrieve IP data");
-        }
+        return ipLookupService.getIpLocation(ip)
+                .filter(IpLocationResponse::isValid)
+                .<ResponseEntity<?>>map(ResponseEntity::ok)
+                .orElseGet(() ->
+                        ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body(Map.of("error", "IP address not found in geo database"))
+                );
 
     }
 
