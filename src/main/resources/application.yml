@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: ip-geo-service
+server:
+  port: 8080
+external:
+  api:
+    base-url: https://free.freeipapi.com/
